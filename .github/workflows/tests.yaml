@@ -1,0 +1,59 @@
+name: Pytest
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  pytest:
+    name: Running pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Requirements
+        run: |
+          python3 -m pip install -r requirements.txt
+
+      - name: Run pytest
+        run: |
+          set -o pipefail
+          pytest | tee pytest_coverage.txt
+
+      - name: Setup python for coverage check
+        if: ${{ github.ref != 'refs/heads/master' }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.3
+
+      - name: Perform coverage check
+        if: ${{ github.ref != 'refs/heads/master' }}
+        run: |
+          python3 -m pip install diff-cover
+          git fetch origin master --depth=1
+          diff-cover test_reports/coverage.xml --compare-branch=origin/master --diff-range-notation .. --fail-under=90 > result.txt 2>&1
+
+      - name: Comment coverage check
+        if: ${{ always() && github.ref != 'refs/heads/master' }}
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: result.txt
+
+        # to run in PRs and create a comment
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        if: ${{ always() && github.ref != 'refs/heads/master' }}
+        with:
+          create-new-comment: true
+          pytest-coverage-path: ./pytest_coverage.txt
+          junitxml-path: ./test_reports/report.xml
+
+        # to get coverage output only and not create comment while merging to Master
+      - name: Pytest coverage output
+        uses: MishaKav/pytest-coverage-comment@main
+        id: coverage_comment
+        if: ${{ always() && (github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/platform-api_release_')) }}
+        with:
+          pytest-coverage-path: ./pytest_coverage.txt
+          junitxml-path: ./test_reports/report.xml
