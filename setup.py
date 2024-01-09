@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from plugin.checker import Plugin
+from restrict_imports.checker import Plugin
 
 
 with open("README.md", "r") as f:
@@ -17,14 +17,14 @@ setup(
     keywords=["flake8", "imports", "python", "restrict"],
     url="https://github.com/fylein/flake8-restrict-imports",
     packages=find_packages(
-        include=["plugin*"]
+        include=["restrict_imports*"]
     ),
     install_requires=[
         "flake8==7.0.0"
     ],
     entry_points={
         "flake8.extension": [
-            "PRI = plugin.checker:Plugin",
+            "PRI = restrict_imports.checker:Plugin",
         ],
     },
     classifiers=[

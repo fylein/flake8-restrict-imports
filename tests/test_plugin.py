@@ -2,11 +2,11 @@ import ast
 import os
 
 import pytest
-from plugin.checker import Plugin
+from restrict_imports.checker import Plugin
 
 
 class TestPlugin:
-    file_name: str = "plugin"
+    file_name: str = "restrict_imports"
     flake8_file_path: str = ".flake8"
 
     def test_when_allowed_imports_config_is_not_present(self):
