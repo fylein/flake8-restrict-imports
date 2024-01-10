@@ -73,7 +73,7 @@ class Visitor(ast.NodeVisitor):
 class Plugin:
     """Restrict imports checker"""
     name = 'restrict_imports'
-    version = '0.1.0'
+    version = '0.1.1'
 
     def __init__(self, tree: ast.AST, filename: str):
         self.tree = tree
