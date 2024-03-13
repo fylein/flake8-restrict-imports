@@ -25,14 +25,8 @@ class Visitor(ast.NodeVisitor):
     def load_imports_config(cls) -> Tuple[Dict, Dict]:
         config = configparser.ConfigParser()
         config.read('.flake8')
-        denied_imports_config = config['flake8'].get('denied_imports_config', None)
-        allowed_imports_config = config['flake8'].get('allowed_imports_config', None)
-
-        if denied_imports_config is None:
-            raise ValueError("Configuration 'denied_imports_config' is missing in the .flake8 file.")
-
-        if allowed_imports_config is None:
-            raise ValueError("Configuration 'allowed_imports_config' is missing in the .flake8 file.")
+        denied_imports_config = config['flake8'].get('denied_imports_config', "{}")
+        allowed_imports_config = config['flake8'].get('allowed_imports_config', "{}")
 
         denied_imports_config = denied_imports_config.replace("'", "\"")
         allowed_imports_config = allowed_imports_config.replace("'", "\"")
